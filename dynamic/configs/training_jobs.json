@@ -1,0 +1,131 @@
+{
+  "default_split": {
+    "train_end_exclusive": "2026-10-01",
+    "valid_month": "2026-10-01",
+    "test_month": null,
+    "month_col": "forecast_month",
+    "add_time_features": true,
+    "split_suffix": "202610_dynamic",
+    "legacy_test_suffix": null,
+    "iterations": 1000,
+    "depth": 6,
+    "l2_leaf_reg": 5.0,
+    "random_seed": 42,
+    "early_stopping_rounds": 50,
+    "auto_class_weights": null
+  },
+  "pos_regression": [
+    {
+      "model_key": "pos_T",
+      "task_type": "regression",
+      "input_path": "data/files/df_loyalty_pos_fs_sel.csv",
+      "target_col": "target_total_spend_month",
+      "output_split_dir": "data/files/pos",
+      "model_output_dir": "data/models/pos",
+      "model_filename": "model_T_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_flag",
+        "hist_bin",
+        "delta_bin",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.05,
+      "calibrate_isotonic": false
+    },
+    {
+      "model_key": "pos_C",
+      "task_type": "regression",
+      "input_path": "data/files/df_noloyalty_pos_fs_sel.csv",
+      "target_col": "target_total_spend_month",
+      "output_split_dir": "data/files/pos",
+      "model_output_dir": "data/models/pos",
+      "model_filename": "model_C_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_flag",
+        "hist_bin",
+        "delta_bin",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.03,
+      "calibrate_isotonic": false
+    }
+  ],
+  "pos_binary": [
+    {
+      "model_key": "binary_T",
+      "task_type": "classification",
+      "input_path": "data/files/df_loyalty_binary_fs_sel.csv",
+      "target_col": "target_flag",
+      "output_split_dir": "data/files/pos_binary",
+      "model_output_dir": "data/models/binary_bin",
+      "model_filename": "model_T_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_total_spend_month",
+        "hist_bin",
+        "delta_bin",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.03,
+      "calibrate_isotonic": true
+    },
+    {
+      "model_key": "binary_C",
+      "task_type": "classification",
+      "input_path": "data/files/df_noloyalty_binary_fs_sel.csv",
+      "target_col": "target_flag",
+      "output_split_dir": "data/files/pos_binary",
+      "model_output_dir": "data/models/binary_bin",
+      "model_filename": "model_C_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_total_spend_month",
+        "hist_bin",
+        "delta_bin",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.03,
+      "calibrate_isotonic": true
+    }
+  ],
+  "pos_delta": [
+    {
+      "model_key": "delta_T",
+      "task_type": "regression",
+      "input_path": "data/files/df_loyalty_delta_bin_fs_sel.csv",
+      "target_col": "delta_bin",
+      "output_split_dir": "data/files/pos_delta",
+      "model_output_dir": "data/models/delta_bin",
+      "model_filename": "model_T_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_flag",
+        "hist_bin",
+        "target_total_spend_month",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.02,
+      "calibrate_isotonic": false
+    },
+    {
+      "model_key": "delta_C",
+      "task_type": "regression",
+      "input_path": "data/files/df_noloyalty_delta_bin_fs_sel.csv",
+      "target_col": "delta_bin",
+      "output_split_dir": "data/files/pos_delta",
+      "model_output_dir": "data/models/delta_bin",
+      "model_filename": "model_C_06_fs_selected.cbm",
+      "ignore_cols": [
+        "cdi_id",
+        "target_flag",
+        "hist_bin",
+        "target_total_spend_month",
+        "target_cashback_month"
+      ],
+      "learning_rate": 0.03,
+      "calibrate_isotonic": false
+    }
+  ]
+}

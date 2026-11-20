@@ -1,0 +1,209 @@
+{
+  "postfix": "dec_current_2026",
+  "start_month": "2026-03-01",
+  "end_month": "2026-12-01",
+  "theme_default": "d40cd3f8-5b8c-426f-84a4-46c848f7b901",
+  "send_to_dbo_base": "dm_dcp_fl.pl_theme_send_to_dbo_v1",
+  "gusev_table": "dm_dcp_fl.gusev_o_client_theme",
+  "send_to_dbo": "dm_dcp_fl.pl_send_to_dbo_union_mae_theme",
+  "cat_features": [
+    "product_segment",
+    "segment",
+    "product_active",
+    "significant_group",
+    "gender",
+    "time_zone",
+    "active_product2"
+  ],
+  "numeric_string_cols": [
+    "code_branch",
+    "code_department"
+  ],
+  "season_base_cols": [
+    "total_spend_lag_1m",
+    "total_spend_3m",
+    "total_spend_6m",
+    "potential_cashback_sum_offered",
+    "potential_cashback_max_offered",
+    "cashback_lag_1m",
+    "cashback_3m",
+    "pos_turnover_lag_1m",
+    "pos_turnover_3m"
+  ],
+  "pos_values": {
+    "2025-01-01": 18.64458142,
+    "2025-02-01": 16.77100784,
+    "2025-03-01": 17.91131324,
+    "2025-04-01": 16.83359701,
+    "2025-05-01": 17.84970137,
+    "2025-06-01": 15.84694422,
+    "2025-07-01": 16.14898008,
+    "2025-08-01": 17.55541702,
+    "2025-09-01": 17.42844075,
+    "2025-10-01": 18.64065285,
+    "2025-11-01": 18.40382364,
+    "2025-12-01": 17.37507281,
+    "2026-01-01": 16.99701678,
+    "2026-02-01": 18.5416244,
+    "2026-03-01": 17.56242237,
+    "2026-04-01": 16.51183347,
+    "2026-05-01": 17.08078586
+  },
+  "model_paths": {
+    "pos_loyal": {
+      "path": "experiment_outputs/202610_current/models/pos/model_T_202610_current.cbm",
+      "type": "regression",
+      "output_col": "pos_loyal_pred"
+    },
+    "pos_noloyal": {
+      "path": "experiment_outputs/202610_current/models/pos/model_C_202610_current.cbm",
+      "type": "regression",
+      "output_col": "pos_noloyal_pred"
+    },
+    "binary_loyal": {
+      "path": "experiment_outputs/202610_current/models/binary_bin/model_T_202610_current.cbm",
+      "type": "classification",
+      "output_col": "binary_loyal_pred"
+    },
+    "binary_noloyal": {
+      "path": "experiment_outputs/202610_current/models/binary_bin/model_C_202610_current.cbm",
+      "type": "classification",
+      "output_col": "binary_noloyal_pred"
+    },
+    "delta_loyal": {
+      "path": "experiment_outputs/202610_current/models/delta_bin/model_T_202610_current.cbm",
+      "type": "regression",
+      "output_col": "delta_loyal_pred"
+    },
+    "delta_noloyal": {
+      "path": "experiment_outputs/202610_current/models/delta_bin/model_C_202610_current.cbm",
+      "type": "regression",
+      "output_col": "delta_noloyal_pred"
+    },
+    "cashback_connected": {
+      "path": "experiment_outputs/202610_current/models/train_pipeline/cashback_connected.cbm",
+      "type": "regression",
+      "output_col": "cashback_pred",
+      "optional": false
+    },
+    "loyalty_connection": {
+      "path": "experiment_outputs/202610_current/models/train_pipeline/loyalty_connect.cbm",
+      "type": "classification",
+      "output_col": "loyal_pred",
+      "optional": false,
+      "calibrator_path": "experiment_outputs/202610_current/models/train_pipeline/isotonic_calibrator_loyalty.pkl"
+    }
+  },
+  "score_columns": [
+    "cdi_id",
+    "offer_scenario_id",
+    "pos_loyal_pred",
+    "pos_noloyal_pred",
+    "binary_loyal_pred",
+    "binary_noloyal_pred",
+    "delta_loyal_pred",
+    "delta_noloyal_pred",
+    "cashback_pred",
+    "loyal_pred",
+    "cashback_expect",
+    "pos_expect"
+  ],
+  "hdfs": {
+    "namenode_url": "http://sgo-hd044.go.rshbank.ru:9870;http://sgo-hd045.go.rshbank.ru:9870",
+    "upload_path": "/warehouse/tablespace/external/hive/stg_datamarts.db/temp_uploads"
+  },
+  "offer_generation": {
+    "mode": "random",
+    "client_col": "cdi_id",
+    "month_col": "forecast_month",
+    "drop_existing_offers": true,
+    "random": {
+      "enabled": true,
+      "fixed_5_count": 8,
+      "variable_count": 1,
+      "variable_percent_values": [
+        5.0,
+        7.0,
+        9.0,
+        11.0,
+        13.0,
+        15.0
+      ],
+      "capped_categories": [
+        "1133",
+        "1134"
+      ],
+      "random_seed": 42,
+      "audit_path": "scores/june/random_offers_audit.csv"
+    }
+  },
+  "send_to_dbo_scenario_mart": {
+    "enabled": true,
+    "active_scenario_id": "base_theme",
+    "active_scenario_filter_sql": "{alias}.offer_scenario_id = 'base_theme'",
+    "historical_union_table": "dm_dcp_fl.pl_send_to_dbo_v3",
+    "historical_union_month": "2026-04-01",
+    "extra_sources": [
+      {
+        "enabled": false,
+        "scenario_id": "uplift_topn",
+        "source": "uplift",
+        "priority": 2,
+        "table": "sandbox_crft.<uplift_offer_table>",
+        "client_id_col": "cdi_id",
+        "period_col": "period_start_date",
+        "category_col": "category_id",
+        "percent_col": "category_percent",
+        "score_col": "uplift_score",
+        "rank_col": "rank",
+        "where_sql": "1=1"
+      },
+      {
+        "enabled": false,
+        "scenario_id": "economy_topn",
+        "source": "economy",
+        "priority": 3,
+        "table": "sandbox_crft.<economy_offer_table>",
+        "client_id_col": "cdi_id",
+        "period_col": "period_start_date",
+        "category_col": "category_id",
+        "percent_col": "category_percent",
+        "score_col": "economy_score",
+        "rank_col": "rank",
+        "where_sql": "1=1"
+      },
+      {
+        "enabled": false,
+        "scenario_id": "external_source",
+        "source": "external_source",
+        "priority": 4,
+        "table": "sandbox_crft.<external_offer_table>",
+        "client_id_col": "cdi_id",
+        "period_col": "period_start_date",
+        "category_col": "category_id",
+        "percent_col": "category_percent",
+        "score_col": "score",
+        "rank_col": "rank",
+        "where_sql": "1=1"
+      },
+      {
+        "enabled": false,
+        "scenario_id": "random_fallback",
+        "source": "random",
+        "priority": 5,
+        "table": "sandbox_crft.<random_offer_table>",
+        "client_id_col": "cdi_id",
+        "period_col": "period_start_date",
+        "category_col": "category_id",
+        "percent_col": "category_percent",
+        "score_col": null,
+        "rank_col": "rank",
+        "where_sql": "1=1"
+      }
+    ]
+  },
+  "preprocessing_mode": "training_aligned",
+  "seasonality_formula": "POS(m-12) / POS(m-14); multiply seasonal bases; missing pair -> 1.0",
+  "strict_features": true,
+  "transaction_table": "sandbox_crft.cb_charges_compact_nbc_monthly_202610"
+}

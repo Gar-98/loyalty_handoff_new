@@ -1,0 +1,28 @@
+{
+  "experiment": "02_july_dynamic",
+  "split": {
+    "train_start": "2025-09-01",
+    "train_end_exclusive": "2026-05-01",
+    "valid_month": "2026-05-01",
+    "gap_month": "2026-06-01",
+    "test_month": "2026-07-01",
+    "inference_month": "2026-07-01"
+  },
+  "fs_by_model": {
+    "cashback_connected": "psi_importance_auto_n",
+    "loyalty_connect": "psi_importance_auto_n",
+    "pos_T": "psi_rfe_loss_auto_n",
+    "pos_C": "psi_rfe_loss_auto_n",
+    "binary_T": "psi_importance_auto_n",
+    "binary_C": "psi_importance_auto_n",
+    "delta_T": "psi_importance_auto_n",
+    "delta_C": "psi_importance_auto_n"
+  },
+  "protected_features": "offered_percent_cat_*",
+  "dynamic_feature_store": "sandbox_crft.feature_store_inc_modular",
+  "dynamic_feature_store_lag": -2,
+  "reuse_current_clients": "sandbox_crft.mae_client_for_loyalty_infer_july_current_2026",
+  "reuse_current_scenarios": "sandbox_crft.send_to_dbo_infer_july_current_2026",
+  "dynamic_score_table": "sandbox_crft.mae_nbc_optimizer_new_model_pos_07_dynamic",
+  "current_score_table": "sandbox_crft.mae_nbc_optimizer_new_model_pos_07_current"
+}
